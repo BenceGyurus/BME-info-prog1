@@ -11,6 +11,21 @@ typedef struct Morze
 }Morze;
 
 
+char* findMorze(char character, Morze* dictionary, int length)
+{
+    if (character == ' ') printf("/ ");
+    else
+    {
+        for (int i = 0; i < length; i++)
+        {
+            if (toupper(character) == dictionary[i].key)
+            {
+                printf("%s ", dictionary[i].value);
+            }
+        }
+    }
+}
+
 void read_from_Input(char **memoria)
 {
     int hossz = 1;
@@ -130,18 +145,15 @@ void read_File(char* fileName, Morze** result, int* lengthOfMorze)
 
 int main(void)
 {
-    /*char** input;
-    input = malloc(sizeof(char*));
-    read_from_Input(input);
-    free(*input);
-    free(input);*/
+
     Morze** morzeChars = malloc(sizeof(Morze*));
-    //printf("%p", morzeChars);
     int morzeLength;
+    char** text;
+    read_from_Input(text);
     read_File("../szotar.txt", morzeChars, &morzeLength);
-    for (int i = 0; i < morzeLength; i++)
+    for (int i = 0; (*text)[i] != '\0'; i++)
     {
-        printf("%c: %s\n", (*morzeChars)[i].key, (*morzeChars)[i].value);
+        findMorze((*text)[i], *morzeChars, morzeLength);
     }
     for (int i = 0; i < (morzeLength); i++)
     {
@@ -149,6 +161,6 @@ int main(void)
     }
     free(*morzeChars);
     free(morzeChars);
-    //Morze m = create_Struct("@ .--.-.");
+    free(*text);
     return 0;
 }
