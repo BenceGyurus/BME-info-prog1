@@ -2,16 +2,47 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdbool.h>
 
 
-typedef struct Morze
+typedef struct Morse
 {
     char key;
     char* value;
-}Morze;
+}Morse;
+
+char* masolat(char* string)
+{
+    int length = strlen(string);
+    char* memoria = malloc(length + 1);
+    strcpy(memoria, string);
+    memoria[length] = '\0';
+    return memoria;
+}
+
+Morse morse_cpy(Morse morse)
+{
+    Morse new_Morse;
+    new_Morse.key = morse.key;
+    new_Morse.value = masolat(morse.value);
+    free(morse.value);
+    return new_Morse;
+}
 
 
-char* findMorze(char character, Morze* dictionary, int length)
+Morse* morse_Linked_List(Morse* pointer, int length, Morse new_Morse){
+    Morse* new_Morse_Array = malloc(sizeof(Morse)*(length+1));
+    for (int i = 0; i < length; i++)
+    {
+        new_Morse_Array[i] = morse_cpy(pointer[i]);
+    }
+    free(pointer);
+    new_Morse_Array[length] = morse_cpy(new_Morse);
+    return new_Morse_Array;
+}
+
+
+char* find_Morze(char character, Morse* dictionary, int length)
 {
     if (character == ' ') printf("/ ");
     else
@@ -26,141 +57,102 @@ char* findMorze(char character, Morze* dictionary, int length)
     }
 }
 
-void read_from_Input(char **memoria)
+
+
+char* to_String_Together(char* string1, char character){             // string1 muss pointer sein
+    char* result = malloc((strlen(string1) + 2) * sizeof(char));
+    strcpy(result, string1);
+    int i = strlen(string1);
+    free(string1);
+    result[i] = character; result[i+1] = '\0';
+    return result;
+}
+
+char* read_From_Input()
 {
-    int hossz = 1;
-    *memoria = malloc(sizeof(char)*hossz);
     char be;
-    (*memoria)[0] = '\0';
-    while (scanf("%c", &be) != EOF && be!='\n')
+    int length = 1;
+    char* result = malloc(length * sizeof(char));
+    result[0] = '\0';
+    while (scanf("%c", &be) != EOF && be != '\n')
     {
-        char* memoria2 = malloc(sizeof(char)*hossz);
-        strcpy(memoria2, *memoria);
-        free(*memoria);
-        *memoria = malloc(sizeof(char)*(hossz+1));
-        strcpy(*memoria, memoria2);
-        free(memoria2);
-        hossz++;
-        (*memoria)[hossz-2] = be;
-        (*memoria)[hossz-1] = '\0';
+        result = to_String_Together(result, be);
     }
+    return result;
 }
 
 
-Morze create_Struct(char* string)
+Morse create_Morse(char* string)
 {
-    Morze m;
+    Morse morse;
+    morse.value = malloc(1 * sizeof(char));
+    morse.value[0] = '\0';
     bool key = false;
-    int length = 1;
-    m.value = malloc(sizeof(char)*length);
-    m.value[0] = '\0';
     for (int i = 0; string[i] != '\0'; i++)
     {
-        if (string[i] != ' ' && key == false)
+        if (string[i] != ' ' && !key)
         {
             key = true;
-            m.key = string[i];
-        }else if (key == true && string[i] != ' ')
-        {
-            char* temp = malloc(sizeof(char)*length);
-            temp[0] = '\0';
-            strcpy(temp, m.value);
-            free(m.value);
-            m.value = malloc(sizeof(char)*(length+1));
-            strcpy(m.value, temp);
-            free(temp);
-            length++;
-            m.value[length-2] = string[i];
-            m.value[length-1] = '\0';
-        }
+            morse.key = string[i];
+        }else if (key == true && string[i] != ' ') morse.value = to_String_Together(morse.value, string[i]);
     }
-    return m;
+    return morse;
+}
+
+void free_Morse(Morse* morse_Array, int length)
+{
+    for (int i = 0; i<length; i++)
+    {
+        free(morse_Array[i].value);
+    }
+    free(morse_Array);
 }
 
 
-void read_File(char* fileName, Morze** result, int* lengthOfMorze)
-{
+Morse* read_Morse_From_File(char* fileName, int* length){
     FILE* file = fopen(fileName, "r");
-    if (file == NULL) {perror("Error opening file"); return;}
-    int hossz = 1;
-    char *memoria = malloc(sizeof(char)*hossz);
-    char be;
-    (memoria)[0] = '\0';
-    int morzeLength = 0;
-    Morze* morzeArray = malloc(hossz*sizeof(Morze));
-    while (fread(&be, sizeof(char), 1, file) == 1)
+    if (file == NULL) return NULL;
+    char* data = malloc(1 * sizeof(char)); data[0] = '\0';
+    char readChar;
+    Morse* morse_Array = malloc(sizeof(Morse));
+    int morse_Length = 0;
+    while (fread(&readChar, sizeof(char), 1, file) == 1)
     {
-        if (be != '\n')
+        if (readChar != '\n')
         {
-            char* memoria2 = malloc(sizeof(char)*hossz);
-            strcpy(memoria2, memoria);
-            free(memoria);
-            memoria = malloc(sizeof(char)*(hossz+1));
-            strcpy(memoria, memoria2);
-            free(memoria2);
-            hossz++;
-            (memoria)[hossz-2] = be;
-            (memoria)[hossz-1] = '\0';
+            data = to_String_Together(data, readChar);
         }else
         {
-            morzeLength++;
-            Morze* temp = malloc(sizeof(Morze)*(morzeLength-1));
-            for (int i = 0; i < (morzeLength-1); i++)
-            {
-                temp[i] = morzeArray[i];
-            }
-            free(morzeArray);
-            morzeArray = malloc(sizeof(Morze)*(morzeLength));
-            for (int i = 0; i < (morzeLength-1); i++)
-            {
-                morzeArray[i] = temp[i];
-            }
-            free(temp);
-            morzeArray[morzeLength-1] = create_Struct(memoria);
-            hossz = 1;
-            free(memoria);
-            memoria = malloc(sizeof(char)*hossz);
-            memoria[0] = '\0';
+            Morse morse = create_Morse(data);
+            morse_Array = morse_Linked_List(morse_Array, morse_Length, morse);
+            free(data);data = malloc(1 * sizeof(char)); data[0] = '\0';
+            morse_Length++;
         }
+
     }
-    *result = malloc(sizeof(Morze)*morzeLength);
-    for (int i = 0; i < (morzeLength); i++)
-    {
-        (*result)[i].value = malloc(sizeof(char)*(strlen(morzeArray[i].value)+1));
-        for (int j = 0; j < strlen(morzeArray[i].value); j++)
-        {
-            (*result)[i].value[j] = morzeArray[i].value[j];
-        }
-        (*result)[i].value[strlen(morzeArray[i].value)] = '\0';
-        (*result)[i].key = morzeArray[i].key;
-    }
-    for (int i = 0; i < (morzeLength); i++)
-    {
-        free(morzeArray[i].value);
-    }
-    *lengthOfMorze = morzeLength;
-    free(morzeArray);
-    free(memoria);
+    *length = morse_Length;
+    free(data);
+    return morse_Array;
 }
+
 
 int main(void)
 {
-
-    Morze** morzeChars = malloc(sizeof(Morze*));
-    int morzeLength;
-    char** text;
-    read_from_Input(text);
-    read_File("../szotar.txt", morzeChars, &morzeLength);
-    for (int i = 0; (*text)[i] != '\0'; i++)
+    int morse_Length;
+    Morse* morse_Array = read_Morse_From_File("../szotar.txt", &morse_Length);
+    if (morse_Array != NULL)
     {
-        findMorze((*text)[i], *morzeChars, morzeLength);
-    }
-    for (int i = 0; i < (morzeLength); i++)
+        printf("%d\n", morse_Length);
+        char* read_Input = read_From_Input();
+        for (int i = 0; read_Input[i] != 0; i++)
+        {
+            find_Morze(read_Input[i], morse_Array, morse_Length);
+        }
+        free_Morse(morse_Array, morse_Length);
+        free(read_Input);
+    }else
     {
-        free((*morzeChars)[i].value);
+        printf("Hiba történt a fájl beolvasása közben");
     }
-    free(*morzeChars);
-    free(morzeChars);
-    free(*text);
     return 0;
 }
