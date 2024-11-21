@@ -16,7 +16,7 @@ typedef enum FunctionEnum {
 int main(int numberOfArgs, char** arguments)    //paraméterek: numberOfArgs: a bemenetek száma; arguments: a bemenetek egy tömbben
 {
     int morse_Length;
-    Morse* morse_Array = read_Morse_From_File("../szotar.txt", &morse_Length);
+    Morse* morse_Array = read_Morse_From_File("./szotar.txt", &morse_Length);
     FunctionEnum inFunction = none;
     if (morse_Array != NULL && morse_Length > 0)
     {

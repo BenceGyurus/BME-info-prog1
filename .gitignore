@@ -134,3 +134,4 @@ fabric.properties
 *.DS_Store
 *.Idea
 *.idea
+.vscode/settings.json

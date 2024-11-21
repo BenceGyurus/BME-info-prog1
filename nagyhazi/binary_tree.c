@@ -6,6 +6,14 @@
 #include <ctype.h>
 #include "debugmalloc.h"
 
+void free_Tree(Node* tree)
+{
+    if (tree == NULL) return;
+    free_Tree(tree->left);
+    free_Tree(tree->right);
+    free(tree);
+}
+
 void build_Binary_tree(Node* node, char* string, char value)            // elkészíti a bináris fát
 {
     if (string[0] == '\0')
@@ -19,7 +27,7 @@ void build_Binary_tree(Node* node, char* string, char value)            // elké
                 node->left = malloc(sizeof(Node));
                 if (node->left == NULL)
                 {
-                    printf("\nNem sikerült memóriát lefoglalni");
+                    printf("\nNem sikerült memóriát lefoglalni\n");
                 } else
                 {
                     node->left->left = NULL;
@@ -35,7 +43,7 @@ void build_Binary_tree(Node* node, char* string, char value)            // elké
                 node->right = malloc(sizeof(Node));
                 if (node->right == NULL)
                 {
-                    printf("\nNem sikerült memóriát lefoglalni");
+                    printf("\nNem sikerült memóriát lefoglalni\n");
                 } else
                 {
                     node->right->left = NULL;
@@ -63,7 +71,7 @@ Node* forward_Morse_Data(Morse* morse_Array, int length)            //előkész�
 }
 
 
-char* reverse_Search_In_Morse_Tree(Node* node, char value,const char* morse_Code)
+char* reverse_Search_In_Morse_Tree(Node* node, char value,char* morse_Code)
 {
     if (!node) return NULL;
     if (node->value == value) {
@@ -92,16 +100,8 @@ bool find_Morze(char character, Node* binary_Tree)
     if (character == ' ') printf("/ ");
     else
     {
-        /*for (int i = 0; i < length; i++)
-        {
-            if (toupper(character) == dictionary[i].key)
-            {
-                printf("%s ", dictionary[i].value);
-                return true;
-            }
-        }*/
         char* morse = reverse_Search_In_Morse_Tree(binary_Tree,  toupper(character), "\0");
-        if (morse == '\0') {printf("\nHibatörtént! Ismeretlen karakter: %c", character); return false;}
+        if (morse == NULL) {printf("\nHibatörtént! Ismeretlen karakter: %c\n", character); return false;}
         printf("%s ", morse);
         free(morse);
     }
@@ -118,6 +118,3 @@ char search_In_tree(Node* node, char* string)
     }
     return '\0';
 }
-//
-// Created by Bence Gyürüs on 2024. 11. 15..
-//

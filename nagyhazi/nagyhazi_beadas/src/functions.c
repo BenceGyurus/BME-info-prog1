@@ -1,12 +1,9 @@
-//
-// Created by Bence Gyürüs on 2024. 11. 05..
-//
+#include "functions.h"
 
-#ifndef FUNCTIONS_H
-#define FUNCTIONS_H
-
-#include <stdbool.h>
-
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "debugmalloc.h"
 
 void* memory_error()
 {
@@ -25,10 +22,10 @@ char* masolat(char* string)
     return memoria;
 }
 
-char* add_Char_Without_Free_Memory(const char* path, char new_char) {               // ugyanazt csinálja
+char* add_Char_Without_Free_Memory(const char* path, char new_char) {
     int len = strlen(path);
     char* new_path = malloc(sizeof(char)*(len + 2));
-    if (!new_path) return NULL;
+    if (!new_path) return memory_error();
     strcpy(new_path, path);
     new_path[len] = new_char;
     new_path[len + 1] = '\0';
@@ -37,11 +34,11 @@ char* add_Char_Without_Free_Memory(const char* path, char new_char) {           
 }
 
 
-char* add_Char_To_String(char* string1, char character){             // string1 muss pointer sein
-    char* result = malloc((strlen(string1) + 2) * sizeof(char));
+char* add_Char_To_String(char* string1, char character){
+    int i = strlen(string1);
+    char* result = malloc((i + 2) * sizeof(char));
     if (result == NULL) return memory_error();
     strcpy(result, string1);
-    int i = strlen(string1);
     free(string1);
     result[i] = character; result[i+1] = '\0';
     return result;
@@ -62,5 +59,3 @@ char* read_From_Input()
     }
     return result;
 }
-
-#endif //FUNCTIONS_H

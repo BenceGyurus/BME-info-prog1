@@ -1,10 +1,10 @@
-#ifndef MORSE_H
-#define MORSE_H
 #include "functions.h"
 #include <stdbool.h>
 #include "binary_tree.h"
-
-
+#include "morse.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include "debugmalloc.h"
 
 Morse morse_cpy(Morse morse)
 {
@@ -68,14 +68,6 @@ void encode_Morse(Node* morse_Tree, char* read_Input)
     }
 }
 
-void free_Tree(Node* tree)
-{
-    if (tree == NULL) return;
-    free_Tree(tree->left);
-    free_Tree(tree->right);
-    free(tree);
-}
-
 bool control_Morse_Code(char* morse)
 {
     for (int i = 0; morse[i] != '\0'; i++)
@@ -107,14 +99,16 @@ void decode_Morse(Node* tree, char* input)
         }
         if (word[0] != '\0') printf("%c", search_In_tree(tree, word));
         free(word);
+        printf("\n");
     }
 }
 
 Morse* read_Morse_From_File(char* fileName, int* length){
     FILE* file = fopen(fileName, "r");
     if (file == NULL){ perror("Nem sikerült a fájlt megnyitni"); return NULL;}
-    char* data = malloc(1 * sizeof(char)); data[0] = '\0';
-    if (data == NULL) {perror("Nem sikerült memóriát lefoglalni"); return NULL;}
+    char* data = malloc(1 * sizeof(char));
+    if (data == NULL) {return memory_error();}
+    data[0] = '\0';
     char readChar;
     Morse* morse_Array = malloc(sizeof(Morse));
     if (morse_Array == NULL) return memory_error();
@@ -129,8 +123,9 @@ Morse* read_Morse_From_File(char* fileName, int* length){
             Morse morse = create_Morse(data);
             morse_Array = morse_Linked_List(morse_Array, morse_Length, morse);
             free(data);
-            data = malloc(1 * sizeof(char)); data[0] = '\0';
+            data = malloc(1 * sizeof(char));
             if (data == NULL) return memory_error();
+            data[0] = '\0';
             morse_Length++;
         }
 
@@ -140,7 +135,3 @@ Morse* read_Morse_From_File(char* fileName, int* length){
     fclose(file);
     return morse_Array;
 }
-
-
-
-#endif //MORSE_H

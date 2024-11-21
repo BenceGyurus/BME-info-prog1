@@ -1,23 +1,18 @@
-#ifndef BINARY_TREE_H
-#define BINARY_TREE_H
-
-
 #include "binary_tree.h"
 #include "functions.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdbool.h>
+#include <ctype.h>
+#include "debugmalloc.h"
 
-typedef struct Morse
+void free_Tree(Node* tree)
 {
-    char key;
-    char* value;
-}Morse;
-
-typedef struct Node
-{
-    char value;
-    struct Node* left;
-    struct Node* right;
-
-} Node;
+    if (tree == NULL) return;
+    free_Tree(tree->left);
+    free_Tree(tree->right);
+    free(tree);
+}
 
 void build_Binary_tree(Node* node, char* string, char value)            // elkészíti a bináris fát
 {
@@ -27,11 +22,35 @@ void build_Binary_tree(Node* node, char* string, char value)            // elké
     }else
     {
         if (string[0] == '.'){
-            if (node->left == NULL){node->left = malloc(sizeof(Node)); if (node->left == NULL) {printf("\nNem sikerült memóriát lefoglalni");} else {node->left->left = NULL; node->left->right = NULL; node->left->value = '\0';}}
+            if (node->left == NULL)
+            {
+                node->left = malloc(sizeof(Node));
+                if (node->left == NULL)
+                {
+                    printf("\nNem sikerült memóriát lefoglalni\n");
+                } else
+                {
+                    node->left->left = NULL;
+                    node->left->right = NULL;
+                    node->left->value = '\0';
+                }
+            }
             build_Binary_tree(node->left, &string[1], value);
         }else
         {
-            if (node->right == NULL){node->right = malloc(sizeof(Node)); if (node->right == NULL) {printf("\nNem sikerült memóriát lefoglalni");} else {node->right->left = NULL; node->right->right = NULL; node->right->value = '\0';}}
+            if (node->right == NULL)
+            {
+                node->right = malloc(sizeof(Node));
+                if (node->right == NULL)
+                {
+                    printf("\nNem sikerült memóriát lefoglalni\n");
+                } else
+                {
+                    node->right->left = NULL;
+                    node->right->right = NULL;
+                    node->right->value = '\0';
+                }
+            }
             build_Binary_tree(node->right, &string[1], value);
         }
     }
@@ -52,7 +71,7 @@ Node* forward_Morse_Data(Morse* morse_Array, int length)            //előkész�
 }
 
 
-char* reverse_Search_In_Morse_Tree(Node* node, char value,const char* morse_Code)
+char* reverse_Search_In_Morse_Tree(Node* node, char value,char* morse_Code)
 {
     if (!node) return NULL;
     if (node->value == value) {
@@ -81,16 +100,8 @@ bool find_Morze(char character, Node* binary_Tree)
     if (character == ' ') printf("/ ");
     else
     {
-        /*for (int i = 0; i < length; i++)
-        {
-            if (toupper(character) == dictionary[i].key)
-            {
-                printf("%s ", dictionary[i].value);
-                return true;
-            }
-        }*/
-        char* morse = reverse_Search_In_Morse_Tree(binary_Tree, toupper(character), "\0");
-        if (morse == '\0') {printf("\nHibatörtént! Ismeretlen karakter: %c", character); return false;}
+        char* morse = reverse_Search_In_Morse_Tree(binary_Tree,  toupper(character), "\0");
+        if (morse == NULL) {printf("\nHibatörtént! Ismeretlen karakter: %c\n", character); return false;}
         printf("%s ", morse);
         free(morse);
     }
@@ -107,5 +118,3 @@ char search_In_tree(Node* node, char* string)
     }
     return '\0';
 }
-
-#endif //BINARY_TREE_H
