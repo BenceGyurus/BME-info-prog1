@@ -6,6 +6,11 @@
 #include <ctype.h>
 #include "debugmalloc.h"
 
+/*
+@brief: A bináris fa által foglalt memóriaterületet szabadítja fel
+@param: tree: A felszabadítandó fa
+*/
+
 void free_Tree(Node* tree)
 {
     if (tree == NULL) return;
@@ -14,7 +19,14 @@ void free_Tree(Node* tree)
     free(tree);
 }
 
-void build_Binary_tree(Node* node, char* string, char value)            // elkészíti a bináris fát
+/*
+@brief : A bináris fa építéséhez szükséges függvény, amely a megadott string alapján épít egy bináris fát, nincs visszatérési értéke, de dinamukusan foglalja le a memóriacíme az első paraméternek megadaott memóriacímhez kapolcsólódik az összes többi ága a fának
+@param : node: A fa aktuális csúcsa
+@param : string: Egy karakternek megfeleltethető morze kód, ami alapján építi fel a fát 
+@param : value: A fa megfelelő csúcsának az értéke
+*/
+
+void build_Binary_tree(Node* node, char* string, char value)
 {
     if (string[0] == '\0')
     {
@@ -56,7 +68,14 @@ void build_Binary_tree(Node* node, char* string, char value)            // elké
     }
 }
 
-Node* forward_Morse_Data(Morse* morse_Array, int length)            //előkészíti az adatokat a a bináris fa elkészítéséhez --> létrehozza az első elemét a fának, végigmegy
+/*
+@brief segédfüggvény, melynek feladata, hogy előkészítse az adatokat a bináris fa felépítéséhez, dinamukisan foglalja a fa memóriaterületét
+@param morse_Array: A morze kódokat tartalmazó tömb
+@param length: A tömb hossza
+@return: A felépített bináris fa gyökerére mutató pointer
+*/
+
+Node* forward_Morse_Data(Morse* morse_Array, int length)
 {
     Node* tree = malloc(sizeof(Node));
     if (tree == NULL) return memory_error();
@@ -70,6 +89,12 @@ Node* forward_Morse_Data(Morse* morse_Array, int length)            //előkész�
     return tree;
 }
 
+/*
+@brief: A bináris fa rekurzív bejárásával megkeresi a megfelelő karaktert a megadott morze kód alapján, dinaikusan foglalja a karakterláncot
+@param: node: A fa aktuális csúcsa
+@param: morse_Code: üres string, amitből majd a függvény csinálja keresett karakter morze kódját
+@return: A visszatérési értéke a karakternek megfelelő útvonal, a morze kód, a karakterlánc első karakterének pointere
+*/
 
 char* reverse_Search_In_Morse_Tree(Node* node, char value,char* morse_Code)
 {
@@ -95,6 +120,13 @@ char* reverse_Search_In_Morse_Tree(Node* node, char value,char* morse_Code)
 }
 
 
+/*
+@brief megkeresi a paraméterül kapott karakter morze kódját
+@param character az a karakter aminek keressük a morze kódját
+@param binary_Tree a bináris fa amiben keressük a karaktert
+@return A karakter megtalálásának sikerességét adja vissza, true: van a fában, false: nincs a fában
+*/
+
 bool find_Morze(char character, Node* binary_Tree)
 {
     if (character == ' ') printf("/ ");
@@ -107,6 +139,13 @@ bool find_Morze(char character, Node* binary_Tree)
     }
     return true;
 }
+
+/*
+@brief Megkeresi a rekurzívan fában a paraméternek kapott karakterláncot
+@param node A fa aktuális csúcsa
+@param string a keresendő morze kód
+return A morze kódnak megfelelő karakter, ha nincs \0
+*/
 
 char search_In_tree(Node* node, char* string)
 {

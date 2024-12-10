@@ -5,18 +5,24 @@
 #include "binary_tree.h"
 
 
-//A main függvény, az egész programot irányítja
-
+// Ebben a felsorolás típusban tárolja a program, hogy éppen melyik funkció van kiválasztva.
 typedef enum FunctionEnum {
     encode,
     decode,
     none
 } FunctionEnum;
 
-int main(int numberOfArgs, char** arguments)    //paraméterek: numberOfArgs: a bemenetek száma; arguments: a bemenetek egy tömbben
+/*
+@brief Vezérli a programot, innen indít minden függvényt
+@param numberOfArgs megadja hány elemű lesz az `arguments` karakter típusú pointer pointere
+@param terminálból kapott paraméterek tömbje
+@return 0;
+ */
+
+int main(int numberOfArgs, char** arguments)
 {
     int morse_Length;
-    Morse* morse_Array = read_Morse_From_File("./szotar.txt", &morse_Length);
+    Morse* morse_Array = read_Morse_From_File("szotar.txt", &morse_Length);
     FunctionEnum inFunction = none;
     if (morse_Array != NULL && morse_Length > 0)
     {

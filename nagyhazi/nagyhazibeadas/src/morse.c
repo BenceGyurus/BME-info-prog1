@@ -6,6 +6,13 @@
 #include <stdio.h>
 #include "debugmalloc.h"
 
+
+/*
+@brief lemásolja a paraméterül kapott Morse struktúrát egy új dinamikisan foglalt memóriacímre
+@param a lemásolandó Morse struktúra
+return az új memóriacím
+*/
+
 Morse morse_cpy(Morse morse)
 {
     Morse new_Morse;
@@ -15,6 +22,12 @@ Morse morse_cpy(Morse morse)
     return new_Morse;
 }
 
+/*
+@brief egy dinamukisa foglalt Morse struktúrájú tömböt és egy Morse struktúrát fűz össze egy új dinamukusan foglalt tömbben
+@param a meglévő tömb pointere
+@param a hozzáfűzendő Morse struktúra
+@return az új tömb memóriacíme
+*/
 
 Morse* morse_Linked_List(Morse* pointer, int length, Morse new_Morse){
     Morse* new_Morse_Array = malloc(sizeof(Morse)*(length+1));
@@ -28,7 +41,11 @@ Morse* morse_Linked_List(Morse* pointer, int length, Morse new_Morse){
 }
 
 
-
+/*
+@brief A függvény egy karakterláncból csinál `Morse` típusú struktúrát, ezt dinamukisan foglalja le
+@param A paraméterként kapott karakterláncot úgy bontja szét, hogy a struktúra kulcsa (`key`) az első nem space karakter lesz, majd minden ezt követő nem space karakter a string végéig az értéke (`value`) lesz a struktúrának
+@return Az elkészített Morse struktúrára memóriacíme
+*/
 
 Morse create_Morse(char* string)
 {
@@ -48,6 +65,12 @@ Morse create_Morse(char* string)
     return morse;
 }
 
+/*
+@brief felszabadítja a morse struktúrából álló dinamikusan foglalt tömböt és a bennük lévő dinamikusa foglalt karakterláncot
+@param morse_Array a felszabadítandó karakterlánc
+@param length a tömb hossza 
+*/
+
 void free_Morse(Morse* morse_Array, int length)
 {
     for (int i = 0; i<length; i++)
@@ -58,6 +81,11 @@ void free_Morse(Morse* morse_Array, int length)
 }
 
 
+/*
+@breif Végigmegy a függvény a paraméterül kapott karakterlánc össze karakterén megkeresi a bináris fában a neki megfelelő morse kódot
+@param morse_Tree bináris fa, amiben szeretnénk keresni a karaktereket
+@param a karakterlánc, amit szerenénk kódolni
+*/
 
 
 void encode_Morse(Node* morse_Tree, char* read_Input)
@@ -68,6 +96,12 @@ void encode_Morse(Node* morse_Tree, char* read_Input)
     }
 }
 
+/*
+@brief **Ellenőrzi, hogy csak a megengedett karakterek (`.` `-` `/` ` `) vannak-e a paraméternek kapott karakterláncban
+@param az ellenőrizendő karakterlánc
+@return az ellenőrzés eredménye true: a feltételnek megfelel, false: nem felel meg a feltételnek
+*/
+
 bool control_Morse_Code(char* morse)
 {
     for (int i = 0; morse[i] != '\0'; i++)
@@ -76,6 +110,12 @@ bool control_Morse_Code(char* morse)
     }
     return true;
 }
+
+/*
+@brief Előkészíti a keresést a bináris fában, ellenőrzi a kapott bemenetet
+@param tree A bináris fa amiben szeretnénk keresni
+@param input A dekódolandó morse kód
+ */
 
 void decode_Morse(Node* tree, char* input)
 {
@@ -102,6 +142,13 @@ void decode_Morse(Node* tree, char* input)
         printf("\n");
     }
 }
+
+/*
+@brief Beolvas egy fájlt amiből kiolvasott értékekből generál egy tömböt aminek elemei `Morze` struktúrájú elemei vannak, ebből egy tömböt csinál aminek a memóriát dinamikusan foglalja le
+@param fileName A beolvasandó fájl neve
+@param length a majd visszaadott tömb hosszához kapott pointer, ebbe kerül bele a fájl hossz
+@return A fájlból beolvasott, morze kódokat tartalmazó dinamikusan foglalt tömb első elemének memóriacíme
+*/
 
 Morse* read_Morse_From_File(char* fileName, int* length){
     FILE* file = fopen(fileName, "r");
